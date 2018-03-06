@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.imkiran.jokpr.JokesProvider;
+import com.imkiran.jokrv.JokeReceiverActivity;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -44,13 +45,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void tellJoke(View view) {
-        JokesProvider jokesProvider = new JokesProvider();
-        String joke = jokesProvider.getjoke();
-        Toast.makeText(this, joke, Toast.LENGTH_SHORT).show();
-        new EndpointsAsyncTask().execute(new Pair<Context, String>(this,joke));
-        /*Intent intent = new Intent(this, JokeReceiverActivity.class);
-        intent.putExtra("test",joke);
-        startActivity(intent);*/
+        new EndpointsAsyncTask(){
+            @Override
+            protected void onPostExecute(String result) {
+                if (result != null) {
+                    startActivity(JokeReceiverActivity.launchIntent(MainActivity.this, result));
+                } else {
+                    Toast.makeText(MainActivity.this, "Sorry, there is no joke!", Toast.LENGTH_LONG).show();
+                }            }
+        }.execute();
     }
 
 
